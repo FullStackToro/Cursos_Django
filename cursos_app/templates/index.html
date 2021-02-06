@@ -2,11 +2,11 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Cursos</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
     {% load static %}
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW" crossorigin="anonymous"></script>
-
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
 </head>
 <body>
 <div class="container">
@@ -71,11 +71,16 @@
                     <tbody>
 
                     {% for curso in cursos %}
-                        <tr>
+                        <tr class="ajax_row" data-id="{{ curso.id }}">
                             <td scope="row">{{ curso.name }}</td>
                             <td scope="row">{{ curso.desc.descripcion }}</td>
                             <td scope="row">{{ curso.created_at }}</td>
-                            <td scope="row"><a href="/eliminar_confirm/{{ curso.id }}" class="text-start me-2">Eliminar </a></td>
+                            {% comment %}<td scope="row"><a href="/eliminar_confirm/{{ curso.id }}" class="text-start me-2">Eliminar </a></td>{% endcomment %}
+                            <td scope="row">
+                                <button type="button" class="btn btn-primary btn-borrar" data-id="{{ curso.id }}" data-name="{{ curso.name }}" data-desc="{{ curso.desc.descripcion }}"data-toggle="modal" data-target="#alerta">
+                                    X
+                                </button>
+                            </td>
                         </tr>
                     {% endfor %}
                     </tbody>
@@ -85,5 +90,69 @@
         {% endblock %}
     </div>
 </div>
+<div class="modal" tabindex="-1" id="alerta">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">¿Estas seguro que deseas eliminar el siguiente curso?</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+
+        <table class="table table-hover table-inf">
+            <thead>
+                <tr class="table-dark">
+                    <th scope="col">Nombre del Curso</th>
+                    <th scope="col">Descripción</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="ajax_row" data-id="{{ curso.id }}">
+                    <td scope="row" class="data-name"></td>
+                    <td scope="row" class="data-desc"></td>
+                </tr>
+            </tbody>
+        </table>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary close" data-dismiss="modal">Close</button>
+        <button type="button" id="confirm-borrar" data-id="00" class="btn btn-danger border border-dark">Eliminar el curso</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+    $('.btn-borrar').on('click', function (){
+        // primero rescato el id del curso a borrar
+        var id = $(this).attr('data-id');
+        $('#confirm-borrar').attr('data-id', id);
+
+        // preparar tabla para modal
+        $('.data-name').html("<td scope='row' class='name_data'>"+$(this).attr('data-name') +"</td>")
+        $('.data-desc').html("<td scope='row' class='name_data'>"+$(this).attr('data-desc') +"</td>")
+
+        // Mostrar alerta
+        $('#alerta').modal('show')
+
+    });
+    $('#confirm-borrar').on('click', function (){
+        let id=$(this).attr('data-id')
+        $.get('delete_ajax/'+id, function (){
+            //borrar la fila
+            $('.ajax_row[data-id='+id+']').slideUp()
+            //cerrar el modal
+            $('#alerta').modal('hide')
+            //alertar al usuario
+            alert("Curso eliminado")
+        })
+    })
+
+    $('.close').on('click', function (){
+        $('#alerta').modal('hide')
+    })
+</script>
 </body>
 </html>

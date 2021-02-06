@@ -2,6 +2,7 @@ from django.shortcuts import render, HttpResponse, redirect
 from .models import Curso, Description
 from django.contrib import messages
 
+
 def index(request):
     temp=Curso.objects.all()
     context={
@@ -29,7 +30,12 @@ def confirmar_delete(request, op):
     return render(request, "delete.html", context)
 
 def eliminar(request, op):
-    print("entro")
     temp=Curso.objects.get(id=int(op))
     temp.delete()
     return redirect("/")
+
+def eliminar_ajax(request, op):
+    print("entro")
+    temp=Curso.objects.get(id=int(op))
+    temp.delete()
+    return HttpResponse("Todo ok")

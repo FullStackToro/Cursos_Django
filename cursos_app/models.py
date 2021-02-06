@@ -28,4 +28,21 @@ class Curso(models.Model):
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 # Create your models here.
