@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+    {% load static %}
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW" crossorigin="anonymous"></script>
+
+</head>
+<body>
+<div class="container">
+    <div class="row justify-content-start">
+        {% block respuesta %}
+        <div class="main col-10 p-3 mx-auto justify-content-center">
+                <h1>GESTIÓN DE CURSOS</h1><hr>
+
+            <div class="row col-8  mt-4">
+                <h2>Agregar curso</h2>
+                {% if messages  %}
+                    <ul class="messages">
+                        {% for mensaje in messages %}
+                        <li {% if mensaje.tags %} class="{{ mensaje.tags }}" {% endif %}> {{ mensaje }}</li>
+                        {% endfor %}
+
+                    </ul>
+                {% endif %}
+                <form action="/new" method="post">
+
+                    {% csrf_token %}
+
+                    <div class="row g-3 align-items-center">
+                        <div class="col-2">
+                            <label for="nombre" class="col-form-label">Nombre:</label>
+                        </div>
+                        <div class="col-auto">
+                            <input type="text" id="nombre" name="nombre" class="form-control" aria-describedby="passwordHelpInline">
+                        </div>
+                        <div class="col-auto">
+                            <span id="passwordHelpInline" class="form-text">
+                            Debe ingresar al menos 5 caracteres.
+                            </span>
+                        </div>
+                    </div>
+                    <div class="row g-3 align-items-center mt-4">
+                        <div class="col-2">
+                            <label for="form_desc" class="col-form-label align-top">Descripción:</label>
+                        </div>
+                        <div class="col-10">
+                            <textarea class="form-control align-top" name="form_desc" placeholder="Ingrese la descripción del curso" id="form_desc" rows="5"></textarea>
+                        </div>
+                    </div>
+                    <div class="row d-flex justify-content-center">
+                        <button type="submit" class="btn btn-primary col-4 mt-4 ml-3 ">Crear</button>
+                    </div>
+                </form>
+
+
+            </div>
+            <div class="table-responsive col-12 mx-auto mt-5">
+                <h2>Cursos</h2>
+                <table class="table table-hover table-inf">
+                    <thead>
+                        <tr class="table-dark">
+                          <th scope="col">Nombre del Curso</th>
+                          <th scope="col">Descripción</th>
+                          <th scope="col">Agregado</th>
+                          <th scope="col">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                    {% for curso in cursos %}
+                        <tr>
+                            <td scope="row">{{ curso.name }}</td>
+                            <td scope="row">{{ curso.desc.descripcion }}</td>
+                            <td scope="row">{{ curso.created_at }}</td>
+                            <td scope="row"><a href="/eliminar_confirm/{{ curso.id }}" class="text-start me-2">Eliminar </a></td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {% endblock %}
+    </div>
+</div>
+</body>
+</html>
